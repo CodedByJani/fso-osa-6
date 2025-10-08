@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import * as anecdotesService from '../services/anecdotes'
+import { getAll, createNew, update } from '../services/anecdotes'
 
 const anecdoteSlice = createSlice({
   name: 'anecdotes',
@@ -8,35 +8,41 @@ const anecdoteSlice = createSlice({
     setAnecdotes(state, action) {
       return action.payload
     },
-    voteAnecdote(state, action) {
-      const id = action.payload.id
-      const anecdote = state.find(a => a.id === id)
-      if (anecdote) {
-        anecdote.votes = action.payload.votes
-      }
-    },
-    createAnecdote(state, action) {
+    appendAnecdote(state, action) {
       state.push(action.payload)
-    }
-  }
+    },
+    updateAnecdote(state, action) {
+      const updated = action.payload
+      return state.map(a => a.id !== updated.id ? a : updated)
+    },
+  },
 })
 
-export const { setAnecdotes, voteAnecdote, createAnecdote } = anecdoteSlice.actions
+export const { setAnecdotes, appendAnecdote, updateAnecdote } = anecdoteSlice.actions
 
-// Thunkit
-export const initializeAnecdotes = () => async dispatch => {
-  const anecdotes = await anecdotesService.getAll()
-  dispatch(setAnecdotes(anecdotes))
+// haetaan anekdootit backendistä asynkronisesti
+export const initializeAnecdotes = () => {
+  return async dispatch => {
+    const anecdotes = await getAll()
+    dispatch(setAnecdotes(anecdotes))
+  }
 }
 
-export const createAnecdoteThunk = (content) => async dispatch => {
-  const newAnecdote = await anecdotesService.createNew(content)
-  dispatch(createAnecdote(newAnecdote))
+// uuden luominen backendin kautta
+export const createAnecdote = (content) => {
+  return async dispatch => {
+    const newAnecdote = await createNew(content)
+    dispatch(appendAnecdote(newAnecdote))
+  }
 }
 
-export const voteAnecdoteThunk = (anecdote) => async dispatch => {
-  const updated = await anecdotesService.update(anecdote.id, { ...anecdote, votes: anecdote.votes + 1 })
-  dispatch(voteAnecdote(updated))
+// äänestyksen tallennus backendissä
+export const voteAnecdote = (anecdote) => {
+  return async dispatch => {
+    const updated = { ...anecdote, votes: anecdote.votes + 1 }
+    const returned = await update(anecdote.id, updated)
+    dispatch(updateAnecdote(returned))
+  }
 }
 
 export default anecdoteSlice.reducer
