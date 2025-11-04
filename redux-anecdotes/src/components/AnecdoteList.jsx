@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { voteAnecdote } from '../reducers/anecdoteReducer'
-import { showNotification } from '../reducers/notificationSlice'
+import { setNotification } from '../reducers/notificationSlice'  // ✅ päivitetty import
 
 const AnecdoteList = () => {
   const anecdotes = useSelector(state => state.anecdotes)
@@ -8,8 +8,8 @@ const AnecdoteList = () => {
   const dispatch = useDispatch()
 
   const vote = (anecdote) => {
-    dispatch(voteAnecdoteThunk(anecdote))
-    dispatch(showNotification(`You voted for: "${anecdote.content}"`, 5000))
+    dispatch(voteAnecdote(anecdote)) // ✅ oikea thunk
+    dispatch(setNotification(`You voted for: "${anecdote.content}"`, 5)) // ✅ uusi notifikaatiomuoto
   }
 
   const filteredAnecdotes = anecdotes

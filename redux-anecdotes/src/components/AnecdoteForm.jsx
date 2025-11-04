@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux'
-import { createAnecdote } from '../reducers/anecdoteReducer' // ✅ korjattu
-import { showNotification } from '../reducers/notificationSlice'
+import { createAnecdote } from '../reducers/anecdoteReducer'
+import { setNotification } from '../reducers/notificationSlice'
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch()
@@ -10,8 +10,12 @@ const AnecdoteForm = () => {
     const content = event.target.anecdote.value
     if (content.trim() === '') return
 
-    dispatch(createAnecdote(content)) // ✅ backendiin tallennus
-    dispatch(showNotification(`You created: "${content}"`, 5000)) // ✅ notifikaatio 5 sekunniksi
+    // luodaan uusi anekdootti backendin kautta
+    dispatch(createAnecdote(content))
+
+    // näytetään ilmoitus 5 sekunniksi
+    dispatch(setNotification(`You created: "${content}"`, 5))
+
     event.target.anecdote.value = ''
   }
 

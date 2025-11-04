@@ -4,7 +4,7 @@ const notificationSlice = createSlice({
   name: 'notification',
   initialState: '',
   reducers: {
-    setNotification(state, action) {
+    setNotificationMessage(state, action) {
       return action.payload
     },
     clearNotification() {
@@ -13,15 +13,15 @@ const notificationSlice = createSlice({
   }
 })
 
-export const { setNotification, clearNotification } = notificationSlice.actions
+export const { setNotificationMessage, clearNotification } = notificationSlice.actions
 
-// Thunk action: asettaa notifikaation ja poistaa sen 5 sekunnin päästä
-export const showNotification = (message, time = 5000) => {
+// uusi versio ohjeen mukaisesti (6.19)
+export const setNotification = (message, seconds) => {
   return dispatch => {
-    dispatch(setNotification(message))
+    dispatch(setNotificationMessage(message))
     setTimeout(() => {
       dispatch(clearNotification())
-    }, time)
+    }, seconds * 1000)
   }
 }
 
