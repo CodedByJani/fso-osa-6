@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux'
-import { createAnecdoteThunk } from '../reducers/anecdoteReducer'
+import { createAnecdote } from '../reducers/anecdoteReducer' // ✅ korjattu
 import { showNotification } from '../reducers/notificationSlice'
 
 const AnecdoteForm = () => {
@@ -10,7 +10,7 @@ const AnecdoteForm = () => {
     const content = event.target.anecdote.value
     if (content.trim() === '') return
 
-    dispatch(createAnecdoteThunk(content)) // ✅ backendiin tallennus
+    dispatch(createAnecdote(content)) // ✅ backendiin tallennus
     dispatch(showNotification(`You created: "${content}"`, 5000)) // ✅ notifikaatio 5 sekunniksi
     event.target.anecdote.value = ''
   }
